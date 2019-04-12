@@ -10,19 +10,41 @@
             border-bottom: 1px solid #ddd;
         }
     
+        .button {
+  background-color: #4CAF50; /* Green */
+  border: none;
+text-align: center;
+font-size: 14px;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+border-radius: 8px;
+  font-size: 16px;
+float: inherit;
+  margin: 4px 2px;
+  cursor: pointer;
+}
+            
+        .button2 {background-color: blue; font-size: 12px; border-radius: 8px; }
+    .button3 {background-color: red; font-size: 12px; border-radius: 8px; }
+.button4 {background-color: darkslateblue; font-size: 12px; border-radius: 8px; }
+.button5 {background-color: black; font-size: 12px; border-radius: 8px; }
+        .button6 {background-color: slateblue; font-size: 12px; border-radius: 8px;}
     </style>
+    
     <script>
         
         // Initialize Firebase
-      var config = {
+        var config = {
             apiKey: "AIzaSyAJV8a7VIWEPGAUGy-qt5_bcEURw1VdqoE",
             authDomain: "chen-e331f.firebaseapp.com",
-            databaseURL: "https://chen-e331f.firebaseio.com",
+        databaseURL: "https://chen-e331f.firebaseio.com",
             projectId: "chen-e331f",
-          
-            storageBucket: "chen-e331f.appspot.com",
-          messagingSenderId: "497797658628"
-    };
+        storageBucket: "chen-e331f.appspot.com",
+            messagingSenderId: "497797658628"
+        };
         firebase.initializeApp(config);
                 
         // Check to see if you are logged in
@@ -37,7 +59,8 @@
                 email = user.email;
                     
                 // write user data to users
-                writeUserData(userId, name, email, imageUrl);
+                //writeUserData(userId, name, email, imageUrl);
+                // moved to tweet function
                 
                 // write data to document
                 mydiv = document.getElementById("mydata");
@@ -87,10 +110,14 @@
         
         // write user data
         function writeUserData(userId, name, email, imageUrl) {
-            firebase.database().ref('users/' + userId).set({
-                username: name,
-                email: email,
-                profile_picture : imageUrl
+            firebase.database().ref('users/' + userId).once('value',    function(snapshot) {
+                 if (!snapshot.exists()) {
+                    firebase.database().ref('users/' + userId).set({
+                        username: name,
+                        email: email,
+                        profile_picture : imageUrl
+                    }); 
+                 }                                      
             });
         }
         
@@ -138,6 +165,7 @@
             var js_time = Date.now();
             var tweetid = firebase.database().ref('tweets/' + userId + "/").push({tweet: nameValue, time: js_time, img: imgValue});
             twitdoc.value = "";
+            writeUserData(userId, name, email, imageUrl);
             console.log("tweet written")
             
             firebase.database().ref('/tweets').once('value').then(function(snapshot) {
@@ -175,31 +203,28 @@
             firebase.auth().signOut().then(function() {
             });
         }
-        
-
+    
     
     </script>
 
     <body>
-        <button onclick="signin()">Sign in</button>
-        <button onclick="signout()">Sign out</button>
+        <button class ="button button6" float: center; onclick="signin()">Sign in</button>
+        <button class="button button6" onclick="signout()">Sign out</button>
         <br>
     
         <form>
-            Tweet:<br>
+            Send a message for the world to view:<br>
             <textarea id="twit" type="text" name="thetweet" cols="100" rows="4"></textarea>
         </form> 
-        <button type="button" onclick="tweet()">Submit</button>
+        <button class ="button button4" type="button" onclick="tweet()">Send Message</button>
     
         <br><input id="inputFileToLoad" type="file" onchange="encodeImageFileAsURL();" />
         <div id="imgTest" style="display:none;"></div>
         
+   <div id="myphoto"></div>
     <div id="mytweets"></div>
     <div id="mydata"></div>
-    <div id="myphoto"></div>
-        
-        
-        
+    
         
     </body>
 
